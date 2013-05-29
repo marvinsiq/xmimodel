@@ -4,22 +4,32 @@ require File.join(File.dirname(__FILE__), 'xmimodel/package.rb')
 require File.join(File.dirname(__FILE__), 'xmimodel/generalization.rb')
 require File.join(File.dirname(__FILE__), 'xmimodel/xmihelper.rb')
 
+##
+# A helper class for working with XMI Models.
 class XmiModel
 
+	# @return [Nokogiri::XML::Document]
 	attr_reader :document
 
-	# Header
+	# @return [String] The contents of the tag 'XMI.header/XMI.documentation/XMI.exporter'.
 	attr_reader :exporter
+
+	# @return [String] The contents of the tag 'XMI.header/XMI.documentation/XMI.exporterVersion'.
 	attr_reader :exporter_version
+
+	# @return [String] The value of property xmi.version of the tag 'XMI.header/XMI.metamodel'.
 	attr_reader :metamodel_version
 
+	# @return [Array<Generalization>] All model generalizations.
 	attr_reader :generalizations
+	
+	# @return [Array<Association>] All model associations.
 	attr_reader :associations
 
 	##
-	# Construtor. 
+	# Constructor. 
 	# 
-	# Recebe como parâmetro o caminho completo do modelo (arquivo xml, xmi...)
+	# @param [String, #read] Path of model.
 	def initialize(model_file_name)
 
 		# Obtem a tag 'XMI.content' que contém todos os objetos que serão tratados
@@ -66,6 +76,11 @@ class XmiModel
 		true
 	end
 
+	##
+	# Get the object of type 'Clazz' by full name of class.
+	#
+	# @param [String, #read] Name of the class including package name.
+	# @return [Clazz]
 	def class_by_full_name(full_class_name)
 		raise ArgumentError.new("Parameter 'full_class_name' cannot be empty.") if full_class_name.nil? or full_class_name.empty?
 		clazz = classes.select{|c| c.full_name == full_class_name}
@@ -77,6 +92,11 @@ class XmiModel
 		end
 	end
 
+	##
+	# Get the object of type 'Clazz' by id.
+	#
+	# @param [String, #read] Id of the class in model file.
+	# @return [Clazz]
 	def class_by_id(class_id)
 		raise ArgumentError.new("#{__method__}: 'class_id' cannot be empty.") if class_id.nil? or class_id.empty?
 		clazz = classes.select{|c| c.id == class_id}
@@ -88,6 +108,10 @@ class XmiModel
 		end
 	end	
 
+	##
+	# Get all model classes.
+	#
+	# @return [Array<Clazz>]
 	def classes
 		return @classes unless @classes.nil?
 		@classes = Array.new
@@ -97,6 +121,11 @@ class XmiModel
 		@classes
 	end
 
+	##
+	# Get the object of type 'Package' by full name of package.
+	#
+	# @param [String, #read] Name of the package including sub packages name.
+	# @return [Package]
 	def package_by_full_name(full_package_name)
 		raise ArgumentError.new("Parameter 'full_package_name' cannot be empty.") if full_package_name.nil? or full_package_name.empty?
 		package = packages.select{|p| p.full_name == full_package_name}
@@ -108,6 +137,10 @@ class XmiModel
 		end
 	end	
 
+	##
+	# Get all model packages.
+	#
+	# @return [Array<Package>]
 	def packages
 		return @all_packages unless @all_packages.nil?
 		@all_packages = Array.new
@@ -118,12 +151,22 @@ class XmiModel
 		@all_packages
 	end
 
+	##
+	# Get the object of type 'State' by id.
+	#
+	# @param [String, #read] Id of the state in model file.
+	# @return [ActionState, FinalState, PseudoState]
 	def state_by_id(id)
 		raise ArgumentError.new("Parameter 'id' cannot be empty.") if id.nil? or id.empty?
 		objs = states.select{|obj| obj.id == id}	
 		(!objs.nil? && objs.size > 0) ? objs[0] : nil
 	end
 
+
+	##
+	# Get all model states.
+	#
+	# @return [Array<ActionState, FinalState, PseudoState>]
 	def states
 		return @states unless @states.nil?
 
