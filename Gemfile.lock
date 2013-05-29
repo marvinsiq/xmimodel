@@ -1,0 +1,12 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    liquid (2.5.0)
+    nokogiri (1.5.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  liquid
+  nokogiri
