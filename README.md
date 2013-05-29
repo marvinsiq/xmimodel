@@ -3,11 +3,12 @@ XmiModel
 
 A helper gem for working with XMI Models
 
-## You need
+# Requirements
+You need
 - [Ruby] (http://www.ruby-lang.org)
 - [Bundler] (http://gembundler.com)
 
-## Install
+# Installation
 
 execute
 
@@ -23,7 +24,7 @@ gem build xmimodel.gemspec
 gem install ./xmimodel-*.gem
 ```
 
-# How to Use
+# Usage
 
 Import the *gem* in your application.
 
@@ -33,8 +34,9 @@ Import the *gem* in your application.
 ```
 
 Create an object of type 'XmiModel' passing the path model
+
 ```
 >> model = XmiModel.new("model_path.xmi")
 ```
 
-See all methods available in the documentation
+See all methods available in the [documentation](http://rubydoc.info/github/marvinsiq/xmimodel/master/frames)
