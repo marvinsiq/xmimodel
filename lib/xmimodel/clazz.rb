@@ -11,9 +11,16 @@ class Clazz
 	
 	attr_reader :id
 	attr_reader :name
+
+	# @return [String] Full Package name of class.
 	attr_reader :package
+
+	# @return [Array<Attribute>] Class attributes.
 	attr_reader :attributes
+
+	# @return [Array<String>] Class associations.
 	attr_reader :stereotypes
+
 	attr_reader :tagged_values
 	attr_reader :operations
 
@@ -37,11 +44,12 @@ class Clazz
 		stereotype_id = xml.attribute("stereotype").to_s
 		if !stereotype_id.empty?
 			stereotype = XmiHelper.stereotype_by_id(xml, stereotype_id)
-			@stereotypes << stereotype.attribute("name").to_s
+			stereotype = Stereotype.new(stereotype, self)
+			@stereotypes << stereotype			
 		end
 		XmiHelper.stereotypes(xml).each do |uml_stereotype|
 			stereotype = Stereotype.new(uml_stereotype, self)
-			@stereotypes << stereotype.name
+			@stereotypes << stereotype
 		end	
 
 		@tagged_values = Array.new
@@ -79,8 +87,8 @@ class Clazz
 		nil
 	end	
 
-	def stereotype_by_href(href)
-		stereotype = @stereotypes.select{|obj| obj.href == href}
+	def stereotype_by_name(name)
+		stereotype = @stereotypes.select{|obj| obj.name == name}
 		return stereotype[0] if !stereotype.nil? && stereotype.size > 0
 		nil		
 	end

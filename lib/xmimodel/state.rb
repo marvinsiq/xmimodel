@@ -44,8 +44,8 @@ class State
 		end		
 	end
 
-	def stereotype_by_href(href)
-		stereotype = @stereotypes.select{|obj| obj.href == href}
+	def stereotype_by_name(name)
+		stereotype = @stereotypes.select{|obj| obj.name == name}
 		return stereotype[0] if !stereotype.nil? && stereotype.size > 0
 		nil		
 	end

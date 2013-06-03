@@ -42,8 +42,8 @@ class Transition
 		@guard_condition = guard_condition.attribute("body").to_s unless guard_condition.nil?
 	end
 
-	def stereotype_by_href(href)
-		stereotype = @stereotypes.select{|s| s.href == href}
+	def stereotype_by_name(name)
+		stereotype = @stereotypes.select{|s| s.name == name}
 		return stereotype[0] if !stereotype.nil? && stereotype.size > 0
 		nil		
 	end

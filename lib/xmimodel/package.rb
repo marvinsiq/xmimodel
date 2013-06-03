@@ -25,8 +25,6 @@ class Package
 		if XmiHelper.has_namespace?(xml)
 			namespace = XmiHelper.namespace(xml)		
 			@namespace = Namespace.new(namespace, self) unless namespace.nil?
-		else
-			puts "[WARN] Package '#{@name}' does not have namespace."
 		end
 
 		self		
