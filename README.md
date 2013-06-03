@@ -2,40 +2,65 @@
 
 A helper gem for working with XMI Models
 
-## Requirements
-You need
-- [Ruby] (http://www.ruby-lang.org)
-- [Bundler] (http://gembundler.com)
-
 ## Installation
 
-execute
+Execute
 
 ```
-./install.sh
+$ gem install xmimodel
 ```
 
-or
+Or, add this line to your application's Gemfile:
 
 ```
-bundle install
-gem build xmimodel.gemspec
-gem install ./xmimodel-*.gem
+gem 'xmimodel'
+```
+
+And then execute:
+
+```
+$ bundle install
+```
+
+To install a local gem execute:
+
+```
+$ bundle install
+$ gem build xmimodel.gemspec
+$ gem install ./xmimodel-*.gem
 ```
 
 ## Usage
 
-Import the *gem* in your application.
+Import the *gem* in your application and create an object of type 'XmiModel' passing the path model.
+Example:
 
 ```
 % irb
->> require 'xmimodel'
+> require 'xmimodel'
+=> true
+> model = XmiModel.new("test/resource/MagicDraw/escola.xml")
+=> 'XmiModel MagicDraw UML 9.5 [Packages: 5, Classes: 7]'
+> model.classes.first.name
+=> "Aluno"
+> model.classes[2].package
+=> Package[br.escola.domain]
+> model.classes.[1].attributes     
+=> [Attribute[br.escola.domain.Aluno::matricula], Attribute[br.escola.domain.Aluno::ativo]]
+> model.classes[3].full_name
+=> "br.escola.domain.Professor"
+> model.classes[3].parent   
+=> Clazz[br.escola.domain.Pessoa]
+> model.classes[6].operations
+=> [Operation[br.escola.view.AlunoIncluir::carregarDados]]
+
 ```
 
-Create an object of type 'XmiModel' passing the path model
+See all methods available in the <a href="http://rubydoc.info/github/marvinsiq/xmimodel/master/frames" target="_top">documentation</a>.
 
-```
->> model = XmiModel.new("model_path.xmi")
-```
+## Changelog
 
-See all methods available in the <a href="http://rubydoc.info/github/marvinsiq/xmimodel/master/frames" target="_top">documentation</a>
+All changes could be found in [CHANGELOG.md](CHANGELOG.md)
+
+## Documentation
+The <a href="http://rubydoc.info/github/marvinsiq/xmimodel/master/frames" target="_top">documentation</a> is available on <a href="http://rubydoc.info/github/marvinsiq/xmimodel/master/frames" target="_top">http://rubydoc.info</a>.
