@@ -15,8 +15,17 @@ class Stereotype
 	end
 
 	def <=>(obj)
-    	href <=> obj.href
+    	name <=> obj.name
 	end
+
+	def ==(obj)
+		return false if obj.nil?
+		if String == obj.class
+			name == obj
+		else
+    		name == obj.name
+    	end
+	end	
 
 	def name
 		return @name unless (@name.nil? or @name.empty?)

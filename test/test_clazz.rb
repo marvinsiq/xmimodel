@@ -146,7 +146,7 @@ class ClazzTest < Test::Unit::TestCase
 				clazz.stereotypes.each do |obj1|
 					achou = false
 					class_data["stereotypes"].each do |obj2|
-						if (obj1 == obj2)
+						if (obj1.name == obj2)
 							achou = true;
 							break;
 						end
