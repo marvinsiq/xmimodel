@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 require 'nokogiri'
 
 ##
@@ -48,7 +49,16 @@ class XmiHelper
 	# Returns a object Nokogiri::XML::Element of type 'UML:ActivityGraph'.
 	def self.activity_graphs(tag)
 		namespace(tag).xpath('./UML:ActivityGraph')
-	end	
+	end
+
+	##
+	# Add a tag UML:Namespace.ownedElement to the parameter xml
+	#
+	def self.add_namespace(xml)
+		xml_namespace = Nokogiri::XML::Node.new('Namespace.ownedElement', xml.document)
+		xml << xml_namespace
+		return xml_namespace
+	end
 
 	##
 	# Get all the Associations in the model.

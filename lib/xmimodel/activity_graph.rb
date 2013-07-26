@@ -1,6 +1,9 @@
+# encoding: utf-8
+
 require 'xmimodel/action_state'
 require 'xmimodel/final_state'
 require 'xmimodel/pseudo_state'
+require 'xmimodel/tag'
 require 'xmimodel/transition'
 
 ##
@@ -8,11 +11,8 @@ require 'xmimodel/transition'
 # It's represented by tag diagram inside of XMI.extension.
 #
 #
-class ActivityGraph
+class ActivityGraph < Tag
 
-	attr_reader :xml
-	
-	attr_reader :id
 	attr_reader :name
 
 	attr_reader :pseudo_states
@@ -20,9 +20,10 @@ class ActivityGraph
 	attr_reader :final_states
 	attr_reader :transitions
 
-	def initialize(xml, parent)
-		@xml = xml
-		@use_case = parent.parent
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
+
+		@use_case = parent_tag.parent_tag
 		
 		@id = xml.attribute("xmi.id").to_s
 		@name = xml.attribute("name").to_s

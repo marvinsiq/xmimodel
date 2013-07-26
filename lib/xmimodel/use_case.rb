@@ -1,14 +1,15 @@
+# encoding: utf-8
+
 require 'xmimodel/activity_graph'
 require 'xmimodel/stereotype'
 require 'xmimodel/signal_event'
+require 'xmimodel/tag'
 require 'xmimodel/tagged_value'
 
-class UseCase
+class UseCase < Tag
 
-	attr_reader :xml
 	attr_reader :package
 
-	attr_reader :id
 	attr_reader :name
 
 	attr_reader :stereotypes
@@ -16,11 +17,11 @@ class UseCase
 
 	#UML:CallEvent
 
-	def initialize(xml, parent)
-		@xml = xml
-		@package = parent.parent
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
 
-		@id = xml.attribute("xmi:id").to_s
+		@package = parent_tag.parent_tag
+
 		@name = xml.attribute("name").to_s
 
 		if XmiHelper.has_namespace?(xml)

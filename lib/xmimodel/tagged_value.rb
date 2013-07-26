@@ -1,17 +1,15 @@
+# encoding: utf-8
 
-class TaggedValue
+require 'xmimodel/tag'
 
-	attr_reader :xml	
+class TaggedValue < Tag
 
-	attr_reader :id
 	attr_reader :name
 	attr_reader :value
 
-	def initialize(xml, owner)
-		@xml = xml
-		@owner = owner
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
 
-		@id = xml.attribute("xmi.id").to_s
 		@name = xml.attribute("name").to_s
 
 		if @name.nil? or @name.empty?
@@ -26,12 +24,19 @@ class TaggedValue
 
 	end
 
+	def value=(new_value)
+		# testar para outros tipos que não sejam o Magic Draw
+		tag = @xml.at_xpath("./UML:TaggedValue.dataValue")
+		tag.inner_html = new_value
+		@value = new_value
+	end
+
 	def ==(obj)
 		return false if obj.nil?
 		if String == obj.class
-			return "#{@name}=#{@value}".eql?(obj)
+			return "#{@name}".eql?(obj)
 		else
-			return @name.eql?(obj.name) && @value.eql?(obj.value)
+			return @name.eql?(obj.name)
 		end
 	end	
 

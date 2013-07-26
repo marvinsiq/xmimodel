@@ -1,20 +1,21 @@
+# encoding: utf-8
 
-class State
+require 'xmimodel/tag'
 
-	attr_reader :xml
+class State < Tag
+
 	attr_reader :activity_graph	
 
-	attr_reader :id
 	attr_reader :name
 
 	attr_reader :stereotypes
 	attr_reader :tagged_values	
 
-	def initialize(xml, activity_graph)
-		@xml = xml
-		@activity_graph = activity_graph
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
+
+		@activity_graph = parent_tag
 		
-		@id = xml.attribute("xmi.id").to_s
 		@name = xml.attribute("name").to_s
 
 		if @name.nil? || @name.empty?

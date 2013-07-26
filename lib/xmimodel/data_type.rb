@@ -1,17 +1,14 @@
+# encoding: utf-8
 
-class DataType
+require 'xmimodel/tag'
 
-	attr_reader :xml
-	attr_reader :parent
+class DataType < Tag
 
-	attr_reader :id
 	attr_reader :name	
 	
-	def initialize(xml, parent)
-		@xml = xml
-		@parent = parent
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
 
-		@id = xml.attribute("xmi.id").to_s
 		@name = xml.attribute("name").to_s.strip		
 	end
 

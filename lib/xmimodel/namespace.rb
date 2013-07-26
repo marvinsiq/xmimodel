@@ -1,15 +1,15 @@
+# encoding: utf-8
+
 require 'xmimodel/association'
 require 'xmimodel/attribute'
 require 'xmimodel/clazz'
 require 'xmimodel/data_type'
 require 'xmimodel/use_case'
 require 'xmimodel/package'
+require 'xmimodel/tag'
 
 # UML:Namespace.ownedElement
-class Namespace
-
-	attr_reader :xml
-	attr_reader :parent
+class Namespace < Tag
 
 	attr_reader :activity_graphs
 
@@ -323,9 +323,8 @@ class Namespace
 	attr_reader :Partition
 =end
 
-	def initialize(xml, parent)
-		@xml = xml
-		@parent = parent
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
 
 		@activity_graphs = Array.new
 		XmiHelper.activity_graphs(xml).each do |obj|
@@ -369,5 +368,8 @@ class Namespace
 			@packages << obj
 		end			
 	end
- 
+
+	def to_s
+		"Namespace"
+	end 
  end

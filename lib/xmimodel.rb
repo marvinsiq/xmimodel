@@ -26,11 +26,15 @@ class XmiModel
 	# @return [Array<Association>] All model associations.
 	attr_reader :associations
 
+	attr_reader :model_file_name
+
 	##
 	# Constructor. 
 	# 
 	# @param [String, #read] Path of model.
 	def initialize(model_file_name)
+
+		@model_file_name = model_file_name
 
 		# Obtem a tag 'XMI.content' que contém todos os objetos que serão tratados
 		f = File.open(model_file_name)		
@@ -51,7 +55,7 @@ class XmiModel
 				uml_package.attribute('name').to_s.empty? || 
 				uml_package.attribute('name').to_s.strip == "Component View" ||
 				uml_package.attribute('name').to_s.strip == "Data types")
-				p = Package.new(uml_package, nil)
+				p = Package.new(uml_package, self)
 				@packages << p
 			end
 		end
@@ -70,11 +74,28 @@ class XmiModel
 
 		@associations = Array.new
 		XmiHelper.all_associations(xmi_content).each do |xml|
-			@associations << Association.new(xml, self)
+
+			association = Association.new(xml, self)
+			
+			association.end_a.participant.associations << association.end_b	
+			association.end_b.participant.associations << association.end_a
+
+			@associations << association			
 		end
 
 		true
 	end
+
+	##
+	# Get the object of type 'Association' by id.
+	#
+	# @param [String, #read] Id of the state in model file.
+	# @return [Association]
+	def association_by_id(id)
+		raise ArgumentError.new("Parameter 'id' cannot be empty.") if id.nil? or id.empty?
+		objs = @associations.select{|obj| obj.id == id}	
+		(!objs.nil? && objs.size > 0) ? objs[0] : nil
+	end	
 
 	##
 	# Get the object of type 'Clazz' by full name of class.
@@ -188,8 +209,24 @@ class XmiModel
 		@states		
 	end
 
+
+	def id_exists?(id)
+		tag = XmiHelper.tag_by_id(@document, '*', id)
+		return !tag.nil?
+	end	
+
 	def to_s
 		"'XmiModel #{exporter} #{exporter_version} [Packages: #{packages.size}, Classes: #{classes.size}]'"
+	end
+
+	def to_xml
+		@document.to_xml
+	end
+
+	def save(model_file_name=@model_file_name)
+		f = File.open(model_file_name, 'w')
+		f.write(@document.to_xml)
+		f.close		
 	end
 
 	private
@@ -200,6 +237,6 @@ class XmiModel
 			@all_packages << p			
 			add_package(p.packages) unless p.packages.nil?
 		end
-	end		
+	end
 
 end

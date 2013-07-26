@@ -46,8 +46,8 @@ class XmiHelperTest < Test::Unit::TestCase
 			associations = XmiHelper.all_associations(model.document)			
 			# Aluno -> Disciplia
 			# Professor -> Disciplina
-			# Pessoa - Telefone
-			assert_equal(associations.size, 3)
+			# Pessoa - Telefone (2x)
+			assert_equal(associations.size, 4)
 		end
 	end
 
@@ -93,7 +93,7 @@ class XmiHelperTest < Test::Unit::TestCase
 		@models.each do |model|
 			package_domain = XmiHelper.package_by_full_name(model.document, "br.escola.domain")
 			associations = XmiHelper.associations(package_domain)			
-			assert_equal(associations.size, 3)
+			assert_equal(associations.size, 4)
 		end		
 	end
 

@@ -1,11 +1,11 @@
+# encoding: utf-8
+
 require 'xmimodel/stereotype'
+require 'xmimodel/tag'
 require 'xmimodel/tagged_value'
 
-class Attribute
+class Attribute < Tag
 
-	attr_reader :xml
-
-	attr_reader :id
 	attr_reader :name
 	attr_reader :type
 	attr_reader :visibility
@@ -17,16 +17,17 @@ class Attribute
 	attr_reader :stereotypes
 	attr_reader :tagged_values
 
-	def initialize(xml, clazz)
-		@xml = xml
-		@clazz = clazz
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
+		
+		@clazz = parent_tag
 
-		@id = xml.attribute("xmi:id").to_s
 		@name = xml.attribute("name").to_s.strip
 		@visibility = xml.attribute("visibility").to_s
 		@visibility = "private" if @visibility == ""
 
-		@type = XmiHelper.attribute_type_name(xml)
+		@obj_type = XmiHelper.attribute_type(xml)
+		@type = XmiHelper.attribute_type_name(xml)		
 
 		@initial_value = XmiHelper.attribute_initial_value(xml)
 		@multiplicity_range = XmiHelper.multiplicity_range(xml)
@@ -42,6 +43,44 @@ class Attribute
 			tagged_value = TaggedValue.new(uml_tagged_value, self)
 			@tagged_values << tagged_value
 		end		
+	end
+
+	def add_xml_tagged_value(xml)
+		model_element_tagged_value().inner_html = model_element_tagged_value().inner_html + xml
+	end
+
+=begin
+	def add_tagged_value(name, value)		
+		if tagged_values.include? name
+			tag = tagged_value_by_name name
+		else
+			tagged_value = Nokogiri::XML::Node.new('TaggedValue', self.xml.document)
+			tagged_value['xmi.id'] = 
+			tagged_value['name'] = name
+			model_element_tagged_value() << tagged_value			
+		end
+		tag.value = value
+	end
+=end
+
+	def is_enum?
+		return false if @obj_type.nil?
+		if @obj_type.class == Nokogiri::XML::Element
+			return true if @obj_type.name == "Enumeration"
+
+			if @obj_type.name == "Class"
+				id = @obj_type.attribute('xmi.id').to_s
+				@enum_obj = xml_root.class_by_id(id)
+				return @enum_obj.stereotypes.include?("org.andromda.profile::Enumeration")
+			end
+		end		
+		false		
+	end
+
+	def enum_obj
+		return @enum_obj unless @enum_obj.nil?
+		is_enum?
+		@enum_obj
 	end
 
 	def full_name
@@ -72,5 +111,17 @@ class Attribute
 	def to_s
 		"Attribute[#{full_name}]"
 	end	
+
+	private
+
+	def model_element_tagged_value
+		return @model_element_tagged_value unless @model_element_tagged_value.nil?
+		@model_element_tagged_value = self.xml.at_xpath('./UML:ModelElement.taggedValue')
+		if @model_element_tagged_value.nil?
+			@model_element_tagged_value = Nokogiri::XML::Node.new('ModelElement.taggedValue', self.xml.document)
+			self.xml << model_element_tagged_value
+		end
+		@model_element_tagged_value
+	end
 
 end

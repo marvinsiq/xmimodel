@@ -19,7 +19,7 @@ class ClazzTest < Test::Unit::TestCase
 			"package" => "br.escola.domain",
 			"attributes" => ["br.escola.domain.Aluno::matricula", "br.escola.domain.Aluno::ativo"],
 			"stereotypes" => ["Entity"],
-			"tagged_values" => ["@javax.persistence.Table.name=aluno", "@java.lang.Deprecated=false"],
+			"tagged_values" => ["@javax.persistence.Table.name", "@java.lang.Deprecated"],
 			"operations" => ["br.escola.domain.Aluno::matricular"],
 			"children" => [],
 			"parent" => "br.escola.domain.Pessoa"
@@ -203,6 +203,30 @@ class ClazzTest < Test::Unit::TestCase
 			end
 		end		
 	end
+
+	def association_end_by_name_and_participant
+		@models.each do |model|
+			clazz = model.class_by_full_name("br.escola.domain.Pessoa")
+			participant = model.class_by_full_name("br.escola.domain.Telefone")
+			associations_end_name = "telefoneComercial"
+
+			association_end = clazz.association_end_by_name(associations_end_name, participant)
+			assert_not_nil(association_end)
+
+			assert_equal(association_end.name, associations_end_name)
+			assert_equal(association_end.participant, participant)			
+		end
+	end	
+
+	def test_associations_end_by_participant
+		@models.each do |model|
+			clazz = model.class_by_full_name("br.escola.domain.Pessoa")
+			participant = model.class_by_full_name("br.escola.domain.Telefone")
+
+			associations_end = clazz.associations_end_by_participant(participant)
+			assert_equal(associations_end.size, 2)
+		end		
+	end		
 
 	# TODO
 	def test_attribute_by_id		

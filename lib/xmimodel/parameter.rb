@@ -1,19 +1,17 @@
+# encoding: utf-8
 
-class Parameter
+require 'xmimodel/tag'
+
+class Parameter < Tag
 	
-	attr_reader :xml
-	attr_reader :owner
-
-	attr_reader :id
 	attr_reader :name
 	attr_reader :kind
 
 	attr_reader :stereotypes
 	attr_reader :tagged_values
 
-	def initialize(xml, owner)
-		@xml = xml
-		@owner = owner
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
 
 		@id = xml.attribute("xmi:id").to_s
 		@name = xml.attribute("name").to_s
@@ -45,8 +43,8 @@ class Parameter
 	end	
 
 	def full_name
-		return "#{@owner.full_name}::#{@kind}" if (@name.nil? || @name.empty?)
-		return "#{@owner.full_name}::#{@name}" 		
+		return "#{@parent_tag.full_name}::#{@kind}" if (@name.nil? || @name.empty?)
+		return "#{@parent_tag.full_name}::#{@name}" 		
 	end
 
 	def to_s

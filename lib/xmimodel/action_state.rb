@@ -1,4 +1,7 @@
+# encoding: utf-8
+
 require 'xmimodel/state'
+require 'xmimodel/tag'
 
 class ActionState < State
 

@@ -1,20 +1,20 @@
+# encoding: utf-8
+
 require 'xmimodel/parameter'
+require 'xmimodel/tag'
 
-class Operation
+class Operation < Tag
 
-	attr_reader :xml
-
-	attr_reader :id
 	attr_reader :name
 	attr_reader :visibility
 
 	attr_reader :parameters
 
-	def initialize(xml, clazz)
-		@xml = xml
-		@clazz = clazz
+	def initialize(xml, parent)
+		super(xml, parent)
 
-		@id = xml.attribute("xmi:id").to_s
+		@clazz = parent
+
 		@name = xml.attribute("name").to_s
 		@visibility = xml.attribute("visibility").to_s
 		@visibility = "private" if @visibility == ""

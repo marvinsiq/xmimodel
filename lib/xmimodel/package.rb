@@ -1,12 +1,11 @@
 # encoding: utf-8
 
 require 'xmimodel/clazz'
-require 'xmimodel/use_case'
 require 'xmimodel/namespace'
+require 'xmimodel/tag'
+require 'xmimodel/use_case'
 
-class Package
-
-	attr_reader :xml
+class Package < Tag
 
 	attr_reader :name
 	attr_reader :full_name
@@ -14,10 +13,10 @@ class Package
 
 	attr_reader :namespace
 
-	def initialize(xml, parent)
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
 
-		@xml = xml
-		@parent_package = parent.parent unless parent.nil?
+		@parent_package = parent_tag.parent_tag unless parent_tag.nil? or parent_tag.class == XmiModel
 
 		@name = xml.attribute("name").to_s
 		@full_name = XmiHelper.full_package_name(xml)
@@ -28,6 +27,11 @@ class Package
 		end
 
 		self		
+	end
+
+	def add_xml_class(xml)
+		add_namespace() if !XmiHelper.has_namespace?(self.xml)
+		@namespace.xml.inner_html = @namespace.xml.inner_html + xml
 	end
 
 	def activity_graphs
@@ -79,6 +83,13 @@ class Package
 
 	def to_s
 		"Package[#{@full_name}]"
-	end	
+	end
+
+	private 
+
+	def add_namespace
+		xml_namespace = XmiHelper.add_namespace(self.xml)
+		@namespace = Namespace.new(xml_namespace, self)		
+	end
 	
 end

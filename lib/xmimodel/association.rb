@@ -1,23 +1,34 @@
+# encoding: utf-8
 
-class Association
+require 'xmimodel/association_end'
+require 'xmimodel/tag'
 
-	attr_reader :xml
-	attr_reader :parent
+class Association < Tag
 
-	attr_reader :id
 	attr_reader :name
-	
-	# TODO Build AssociationEnd class
-	def initialize(xml, parent)
-		@xml = xml
-		@parent = parent
 
-		@id = xml.attribute("xmi.id").to_s
+	attr_reader :end_a
+	attr_reader :end_b	
+	
+	def initialize(xml, parent)
+		super(xml, parent)
+
 		@name = xml.attribute("name").to_s.strip
 
-		#association_end_a
-		#association_end_b
+		association_end = xml.xpath('./UML:Association.connection/UML:AssociationEnd')
+
+		@end_a = AssociationEnd.new(association_end, 0, self)
+		@end_b = AssociationEnd.new(association_end, 1, self)
 	end
+
+	# @return [String]
+	def full_name
+		if @name.nil? or @name.empty?
+			"#{@end_a.name}[#{@end_a.participant.full_name}] - #{@end_b.name}[#{@end_b.participant.full_name}]"
+		else
+			"#{@name}(#{@end_a.name}[#{@end_a.participant.full_name}] - #{@end_b.name}[#{@end_b.participant.full_name}])"
+		end
+	end	
 
 	def to_s
 		"Association[#{@name}]"

@@ -1,10 +1,10 @@
+# encoding: utf-8
+
 require 'xmimodel/stereotype'
+require 'xmimodel/tag'
 require 'xmimodel/tagged_value'
 
-class Transition
-
-	attr_reader :xml
-	attr_reader :id
+class Transition < Tag
 
 	attr_reader :activity_graph
 
@@ -17,11 +17,11 @@ class Transition
 
 	attr_reader :guard_condition
 
-	def initialize(xml, activity_graph)
-		@xml = xml
-		@activity_graph = activity_graph
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
+
+		@activity_graph = parent_tag
 		
-		@id = xml.attribute("xmi.id").to_s
 		@trigger = xml.attribute("trigger").to_s
 		@source = xml.attribute("source").to_s
 		@target = xml.attribute("target").to_s

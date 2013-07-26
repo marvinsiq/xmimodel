@@ -1,21 +1,20 @@
+# encoding: utf-8
+
 require 'xmimodel/parameter'
+require 'xmimodel/tag'
 
-class SignalEvent
+class SignalEvent < Tag
 
-	attr_reader :xml
-
-	attr_reader :id
 	attr_reader :name
 
 	attr_reader :parameters
 
 	attr_reader :use_case
 
-	def initialize(xml, use_case)
-		@xml = xml
-		@use_case = use_case.parent
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
+		@use_case = parent_tag.parent_tag
 
-		@id = xml.attribute("xmi:id").to_s
 		@name = xml.attribute("name").to_s
 
 		@parameters = Array.new

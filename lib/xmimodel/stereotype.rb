@@ -1,14 +1,14 @@
+# encoding: utf-8
 
-class Stereotype
+require 'xmimodel/tag'
 
-	attr_reader :xml	
+class Stereotype < Tag
+
 	attr_reader :href
 
-	def initialize(xml, owner)
-		@xml = xml
-		@owner = owner
+	def initialize(xml, parent_tag)
+		super(xml, parent_tag)
 
-		@id = xml.attribute("xmi.id").to_s
 		@name = xml.attribute("name").to_s
 		@href = xml.attribute("href").to_s
 		@idref = xml.attribute("xmi.idref").to_s

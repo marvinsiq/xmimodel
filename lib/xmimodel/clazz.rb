@@ -1,15 +1,13 @@
 # encoding: utf-8
 
 require 'xmimodel/attribute'
-require 'xmimodel/stereotype'
-require 'xmimodel/tagged_value'
 require 'xmimodel/operation'
+require 'xmimodel/tag'
+require 'xmimodel/tagged_value'
+require 'xmimodel/stereotype'
 
-class Clazz
+class Clazz < Tag
 	
-	attr_reader :xml
-	
-	attr_reader :id
 	attr_reader :name
 
 	# @return [String] Full Package name of class.
@@ -18,26 +16,31 @@ class Clazz
 	# @return [Array<Attribute>] Class attributes.
 	attr_reader :attributes
 
-	# @return [Array<String>] Class associations.
+	# @return [Array<Stereotype>] Class stereotypes.
 	attr_reader :stereotypes
 
+	# @return [Array<TaggedValue>] Class tagged values.
 	attr_reader :tagged_values
+	
 	attr_reader :operations
 
 	attr_accessor :children
 	attr_accessor :parent
 
-	def initialize(xml, parent)
-		@xml = xml
-		@package = parent.parent
-		
-		@id = xml.attribute("xmi.id").to_s
+	# @return [Array<AssociationEnd>] Class associations end.
+	attr_reader :associations
+
+	def initialize(xml, parent_tag)		
+		super(xml, parent_tag)
+
+		@package = parent_tag.parent_tag
+				
 		@name = xml.attribute("name").to_s.strip
 		
 		@attributes = Array.new
 		XmiHelper.attributes(xml).each do |uml_attribute|
 			attribute = Attribute.new(uml_attribute, self)
-			@attributes << attribute
+			@attributes << attribute			
 		end
 
 		@stereotypes = Array.new
@@ -67,7 +70,35 @@ class Clazz
 		# Será povoado quando tratar dos objetos do tipo Genezalization
 		@children = Array.new
 
+		@associations = Array.new
+
 	end
+
+	def add_xml_attribute(xml_attribute)
+		parent = self.xml.at_xpath('./UML:Classifier.feature')
+		if parent.nil?
+			parent = Nokogiri::XML::Node.new('Classifier.feature', self.xml.document)
+			self.xml << parent
+		end		
+		parent.inner_html = parent.inner_html + xml_attribute
+	end
+
+	##
+	# @param [String, #read] associations_end_name 
+	# @param [Clazz, #read] participant
+	# @return [AssociationEnd]	
+	def association_end_by_name_and_participant(associations_end_name, participant)
+		obj = @associations.select{|obj| obj.name == associations_end_name && obj.participant == participant}
+		return obj[0] if !obj.nil? && obj.size > 0
+		nil
+	end	
+
+	##
+	# @param [Clazz, #read] participant
+	# @return [Array<AssociationEnd>]
+	def associations_end_by_participant(participant)
+		obj = @associations.select{|obj| obj.participant == participant}
+	end	
 
 	def attribute_by_id(attribute_id)
 		attribute = @attributes.select{|obj| obj.id == attribute_id}
@@ -88,7 +119,7 @@ class Clazz
 	end	
 
 	def stereotype_by_name(name)
-		stereotype = @stereotypes.select{|obj| obj.name == name}
+		stereotype = @stereotypes.select{|obj| obj == name}
 		return stereotype[0] if !stereotype.nil? && stereotype.size > 0
 		nil		
 	end
