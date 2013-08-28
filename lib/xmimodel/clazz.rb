@@ -81,6 +81,23 @@ class Clazz < Tag
 			self.xml << parent
 		end		
 		parent.inner_html = parent.inner_html + xml_attribute
+
+		@attributes << Attribute.new(uml_attribute, self)		
+	end
+
+	##
+	# @param xml [Nokogiri::XML::Element, #read]
+	def add_xml_stereotype(xml)		
+		parent = self.xml.at_xpath('./UML:ModelElement.stereotype')
+		if parent.nil?
+			parent = Nokogiri::XML::Node.new('ModelElement.stereotype', self.xml.document)
+			self.xml << parent
+		end		
+		parent.inner_html = parent.inner_html + xml.to_xml
+
+		stereotype = Stereotype.new(xml, self)
+		@stereotypes << stereotype
+		return stereotype
 	end
 
 	##
