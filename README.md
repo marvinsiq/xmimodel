@@ -29,6 +29,7 @@ $ bundle install
 $ gem build xmimodel.gemspec
 $ gem install ./xmimodel-*.gem
 ```
+See all versions in [http://rubygems.org/gems/xmimodel](http://rubygems.org/gems/xmimodel)
 
 ## Usage
 
