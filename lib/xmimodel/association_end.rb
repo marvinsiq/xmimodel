@@ -35,7 +35,10 @@ class AssociationEnd < Tag
 	attr_reader :stereotypes
 
 	# @return [Array<TaggedValue>] Association end tagged values.
-	attr_reader :tagged_values	
+	attr_reader :tagged_values
+
+	# @return [Association] Return the parent association of this association end
+	attr_reader :association	
 	
 	def initialize(xmls, index, parent_tag)		
 		super(xmls[index], parent_tag)
@@ -44,6 +47,7 @@ class AssociationEnd < Tag
 		@xml_b = xmls[1]
 
 		@xmi_model = parent_tag.parent_tag
+		@association = parent_tag
 	
 		@participant_id = @xml.attribute("participant").to_s
 

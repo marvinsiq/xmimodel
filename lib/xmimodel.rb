@@ -77,10 +77,13 @@ class XmiModel
 
 			association = Association.new(xml, self)
 			
-			association.end_a.participant.associations << association.end_b	
-			association.end_b.participant.associations << association.end_a
+			association.end_a.participant.associations << association	
+			association.end_b.participant.associations << association
 
-			@associations << association			
+			association.end_a.participant.associations_end << association.end_b	
+			association.end_b.participant.associations_end << association.end_a			
+
+			@associations << association
 		end
 
 		true
