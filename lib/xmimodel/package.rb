@@ -51,6 +51,11 @@ class Package < Tag
 		nil
 	end
 
+	def enumerations
+		return Array.new if @namespace.nil?
+		@namespace.enumerations
+	end
+
 	def packages
 		return Array.new if @namespace.nil?
 		@namespace.packages

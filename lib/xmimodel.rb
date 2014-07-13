@@ -77,8 +77,16 @@ class XmiModel
 
 			association = Association.new(xml, self)
 			
-			association.end_a.participant.associations << association.end_b	
-			association.end_b.participant.associations << association.end_a
+			if (association.end_a.participant.nil?)
+				puts 'WARN: association.end_a.participant NIL' 
+			else
+				association.end_a.participant.associations << association.end_b	
+			end
+			if (association.end_b.participant.nil?)
+				puts 'WARN: association.end_b.participant NIL' 
+			else
+				association.end_b.participant.associations << association.end_a
+			end
 
 			@associations << association			
 		end
@@ -141,6 +149,19 @@ class XmiModel
 		end
 		@classes
 	end
+
+	##
+	# Get all model enumerations.
+	#
+	# @return [Array<Enumeration>]
+	def enumerations
+		return @enumerations unless @enumerations.nil?
+		@enumerations = Array.new
+		packages.each do |p|
+			@enumerations.concat p.enumerations.sort
+		end
+		@enumerations
+	end	
 
 	##
 	# Get the object of type 'Package' by full name of package.

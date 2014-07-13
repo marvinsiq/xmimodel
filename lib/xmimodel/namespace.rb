@@ -7,6 +7,7 @@ require 'xmimodel/data_type'
 require 'xmimodel/use_case'
 require 'xmimodel/package'
 require 'xmimodel/tag'
+require 'xmimodel/enumeration'
 
 # UML:Namespace.ownedElement
 class Namespace < Tag
@@ -32,6 +33,9 @@ class Namespace < Tag
 	# Array of 'UML:Package'
 	attr_reader :packages
 
+	# Array of 'UML:Enumeration'
+	attr_reader :enumerations
+
 	# TODO
 =begin
 	# UML:ModelElement
@@ -48,9 +52,6 @@ class Namespace < Tag
 
 	# UML:Primitive
 	attr_reader :Primitive
-
-	# UML:Enumeration
-	attr_reader :Enumeration
 
 	# UML:ProgrammingLanguageDataType
 	attr_reader :ProgrammingLanguageDataType
@@ -366,7 +367,13 @@ class Namespace < Tag
 		XmiHelper.packages(xml).each do |tag|
 			obj = Package.new(tag, self)
 			@packages << obj
-		end			
+		end
+
+		@enumerations = Array.new		
+		XmiHelper.enumerations(xml).each do |tag|
+			obj = Enumeration.new(tag, self)
+			@enumerations << obj
+		end	
 	end
 
 	def to_s

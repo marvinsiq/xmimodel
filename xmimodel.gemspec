@@ -1,8 +1,8 @@
 require 'rake'
 Gem::Specification.new do |s|
   s.name        = 'xmimodel'
-  s.version     = '0.1.1'
-  s.date        = '2013-02-03'
+  s.version     = '0.2.1'
+  s.date        = '2014-07-11'
   s.summary     = "Xmi Model!"
   s.description = "A helper gem for working with XMI files"
   s.authors     = ["Marcus Siqueira"]

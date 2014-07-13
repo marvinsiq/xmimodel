@@ -258,7 +258,7 @@ class XmiHelper
 		namespace(tag).xpath("./UML:DataType")		
 	end	
 
-	def self.enumeratios(tag)
+	def self.enumerations(tag)
 		namespace(tag).xpath("./UML:Enumeration")
 	end
 
@@ -646,7 +646,7 @@ class XmiHelper
 	end	
 
 	def self.operations(uml_class)
-		raise ArgumentError.new("Parameter is not a UML:Class tag.") if uml_class.name != "Class"
+		raise ArgumentError.new("Parameter is not a UML:Class tag (#{uml_class.name}).") if uml_class.name != "Class" && uml_class.name != "Enumeration"
 
 		uml_class.xpath('./UML:Classifier.feature/UML:Operation')		
 	end	
