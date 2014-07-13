@@ -24,11 +24,17 @@ class Clazz < Tag
 	
 	attr_reader :operations
 
+	# @return [Array<Clazz>] Return the child classes when has inheritance.
 	attr_accessor :children
+
+	# @return [Clazz] Return the parent class when has inheritance.
 	attr_accessor :parent
 
-	# @return [Array<AssociationEnd>] Class associations end.
+	# @return [Array<Association>] Class associations.
 	attr_reader :associations
+
+	# @return [Array<AssociationEnd>] Class associations end.
+	attr_reader :associations_end	
 
 	def initialize(xml, parent_tag)		
 		super(xml, parent_tag)
@@ -71,6 +77,7 @@ class Clazz < Tag
 		@children = Array.new
 
 		@associations = Array.new
+		@associations_end = Array.new
 
 	end
 
@@ -105,7 +112,7 @@ class Clazz < Tag
 	# @param [Clazz, #read] participant
 	# @return [AssociationEnd]	
 	def association_end_by_name_and_participant(associations_end_name, participant)
-		obj = @associations.select{|obj| obj.name == associations_end_name && obj.participant == participant}
+		obj = @associations_end.select{|obj| obj.name == associations_end_name && obj.participant == participant}
 		return obj[0] if !obj.nil? && obj.size > 0
 		nil
 	end	
@@ -114,7 +121,7 @@ class Clazz < Tag
 	# @param [Clazz, #read] participant
 	# @return [Array<AssociationEnd>]
 	def associations_end_by_participant(participant)
-		obj = @associations.select{|obj| obj.participant == participant}
+		obj = @associations_end.select{|obj| obj.participant == participant}
 	end	
 
 	def attribute_by_id(attribute_id)

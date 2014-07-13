@@ -77,18 +77,13 @@ class XmiModel
 
 			association = Association.new(xml, self)
 			
-			if (association.end_a.participant.nil?)
-				puts 'WARN: association.end_a.participant NIL' 
-			else
-				association.end_a.participant.associations << association.end_b	
-			end
-			if (association.end_b.participant.nil?)
-				puts 'WARN: association.end_b.participant NIL' 
-			else
-				association.end_b.participant.associations << association.end_a
-			end
+			association.end_a.participant.associations << association	
+			association.end_b.participant.associations << association
 
-			@associations << association			
+			association.end_a.participant.associations_end << association.end_b	
+			association.end_b.participant.associations_end << association.end_a			
+
+			@associations << association
 		end
 
 		true

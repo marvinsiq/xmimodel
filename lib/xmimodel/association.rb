@@ -31,7 +31,11 @@ class Association < Tag
 	end	
 
 	def to_s
-		"Association[#{@name}]"
+		if @name.nil? or @name.empty?
+			"Association[#{@end_a.participant.full_name} - #{@end_b.participant.full_name}]"
+		else
+			"Association[#{@end_a.participant.full_name} - #{@end_b.participant.full_name} (#{@name})]"
+		end
 	end	
 	
 end
