@@ -80,6 +80,9 @@ class XmiModel
 			association.end_a.participant.associations << association	
 			association.end_b.participant.associations << association
 
+			association.end_a.other_end = association.end_b
+			association.end_b.other_end = association.end_a
+
 			association.end_a.participant.associations_end << association.end_b	
 			association.end_b.participant.associations_end << association.end_a			
 

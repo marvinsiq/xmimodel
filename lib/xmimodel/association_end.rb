@@ -39,9 +39,17 @@ class AssociationEnd < Tag
 
 	# @return [Association] Return the parent association of this association end
 	attr_reader :association	
+
+	# @return [AssociationEnb] Return the other end of the association
+	attr_accessor :other_end	
+
+	# @return [Boolean]
+	attr_reader :is_first	
 	
 	def initialize(xmls, index, parent_tag)		
 		super(xmls[index], parent_tag)
+
+		@is_first = index == 0
 
 		@xml_a = xmls[0]
 		@xml_b = xmls[1]
