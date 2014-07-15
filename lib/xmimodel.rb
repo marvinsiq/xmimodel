@@ -242,6 +242,19 @@ class XmiModel
 		@document.to_xml
 	end
 
+	##
+	# Get all Use Case.
+	#
+	# @return [Array<UseCase>]
+	def use_cases
+		return @use_cases unless @use_cases.nil?
+		@use_cases = Array.new
+		packages.each do |p|
+			@use_cases.concat p.use_cases.sort
+		end
+		@use_cases
+	end	
+
 	def save(model_file_name=@model_file_name)
 		f = File.open(model_file_name, 'w')
 		f.write(@document.to_xml)
