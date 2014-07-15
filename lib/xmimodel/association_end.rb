@@ -73,7 +73,14 @@ class AssociationEnd < Tag
 
 		@visibility = @xml.attribute("visibility").to_s
 		@is_navigable = @xml.attribute("isNavigable").to_s
+		if "true" == @is_navigable
+			@is_navigable = true 
+		else
+			@is_navigable = false
+		end		
+
 		@is_specification = @xml.attribute("isSpecification").to_s
+
 		@ordering = @xml.attribute("ordering").to_s
 		@aggregation = @xml.attribute("aggregation").to_s
 		@target_scope = @xml.attribute("targetScope").to_s
