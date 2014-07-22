@@ -5,11 +5,15 @@ require 'xmimodel/tag'
 
 class ActionState < State
 
-	attr_reader :deferrable_event
+	attr_reader :deferrable_event_id
+	attr_accessor :deferrable_event
 
 	def initialize(xml, activity_graph)
 		super(xml, activity_graph)
-		@deferrable_event = xml.attribute("deferrableEvent").to_s
+		@deferrable_event_id = xml.attribute("deferrableEvent").to_s
+
+		@type = :action_state
+
 		true
 	end
 

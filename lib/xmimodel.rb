@@ -91,7 +91,7 @@ class XmiModel
 		end
 
 		# Associa os signal events aos action states 
-		use_cases.each do |use_case|
+		use_cases().each do |use_case|
 			use_case.activity_graphs.each do |activity_graph|
 				activity_graph.states.each do |state|
 					state.transitions.each do |transition|
@@ -105,6 +105,18 @@ class XmiModel
 			end
 		end
 
+		call_events().each do |call_event|
+			operation = operation_by_id(call_event.operation_id)
+			call_event.operation = operation
+		end			
+
+		# Associa o deferrable_event dos action states aos call events
+		states().each do |state|
+			if state.is_action_state? && (!state.deferrable_event_id.nil? && !state.deferrable_event_id.empty?)
+				call_event = call_event_by_id(state.deferrable_event_id)
+				state.deferrable_event = call_event
+			end
+		end
 
 		true
 	end
@@ -299,6 +311,54 @@ class XmiModel
 			@use_cases.concat p.use_cases.sort
 		end
 		@use_cases
+	end
+
+	##
+	# Get all Call Events.
+	#
+	# @return [Array<CallEvent>]
+	def call_events
+		return @call_events unless @call_events.nil?
+		@call_events = Array.new
+		use_cases.each do |c|
+			@call_events.concat c.call_events
+		end
+		@call_events
+	end
+
+	##
+	# Get the object of type 'CallEvent' by id.
+	#
+	# @param [String, #read] Id of the CallEvent in model file.
+	# @return [CallEvent]
+	def call_event_by_id(id)		
+		raise ArgumentError.new("Parameter 'id' cannot be empty.") if id.nil? or id.empty?
+		objs = call_events().select{|obj| obj.id == id}	
+		(!objs.nil? && objs.size > 0) ? objs[0] : nil
+	end
+
+	##
+	# Get all Operations
+	#
+	# @return [Array<Operation>]
+	def operations
+		return @operations unless @operations.nil?
+		@operations = Array.new
+		classes.each do |c|
+			@operations.concat c.operations
+		end
+		@operations
+	end
+
+	##
+	# Get the object of type 'Operation' by id.
+	#
+	# @param [String, #read] Id of the Operation in model file.
+	# @return [Operation]
+	def operation_by_id(id)		
+		raise ArgumentError.new("Parameter 'id' cannot be empty.") if id.nil? or id.empty?
+		objs = operations().select{|obj| obj.id == id}	
+		(!objs.nil? && objs.size > 0) ? objs[0] : nil
 	end	
 
 	def save(model_file_name=@model_file_name)

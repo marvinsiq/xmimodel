@@ -73,6 +73,10 @@ class State < Tag
 		@type == :final_state
 	end
 
+	def is_action_state?
+		@type == :action_state
+	end
+
 	def path
 		if !source().nil?
 			source().path + ":" + name

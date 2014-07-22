@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'xmimodel/attribute'
+require 'xmimodel/call_event'
 require 'xmimodel/operation'
 require 'xmimodel/tag'
 require 'xmimodel/tagged_value'
@@ -22,7 +23,7 @@ class Clazz < Tag
 	# @return [Array<TaggedValue>] Class tagged values.
 	attr_reader :tagged_values
 	
-	attr_reader :operations
+	attr_reader :operations	
 
 	# @return [Array<Clazz>] Return the child classes when has inheritance.
 	attr_accessor :children
@@ -133,6 +134,12 @@ class Clazz < Tag
 	def attribute_by_name(attribute_name)
 		attribute = @attributes.select{|obj| obj.name == attribute_name}
 		return attribute[0] if !attribute.nil? && attribute.size > 0
+		nil
+	end
+
+	def operation_by_id(operation_id)
+		operation = @operations.select{|obj| obj.id == operation_id}
+		return operation[0] if !operation.nil? && operation.size > 0
 		nil
 	end
 

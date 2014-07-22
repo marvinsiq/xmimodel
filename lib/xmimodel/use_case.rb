@@ -39,7 +39,7 @@ class UseCase < Tag
 		XmiHelper.tagged_values(xml).each do |uml_tagged_value|
 			tagged_value = TaggedValue.new(uml_tagged_value, self)
 			@tagged_values << tagged_value
-		end	
+		end
 	end
 
 	def activity_graphs
@@ -75,6 +75,11 @@ class UseCase < Tag
 		return tagged_value[0] if !tagged_value.nil? && tagged_value.size > 0
 		nil			
 	end
+
+	def call_events
+		return Array.new if @namespace.nil?
+		@namespace.call_events
+	end	
 
 	def <=>(obj)
     	full_name <=> obj.full_name

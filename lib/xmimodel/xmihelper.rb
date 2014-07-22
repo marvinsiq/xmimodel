@@ -210,7 +210,9 @@ class XmiHelper
 	# * operations
 	# * signal_events	
 	def self.call_events(tag)
-		namespace(tag).xpath("./UML:CallEvent")		
+		#raise ArgumentError.new("Parameter is not a UML:UseCase tag (#{tag.name}).") if tag.name != "UseCase"
+		#tag.xpath('./UML:Classifier.feature/UML:CallEvent')
+		namespace(tag).xpath('./UML:CallEvent')
 	end	
 
 	def self.class_by_full_name(document, full_name)
@@ -308,12 +310,13 @@ class XmiHelper
 	end	
 
 	def self.namespace(tag)
-		raise ArgumentError.new("Parameter cannot be nil..") if tag.nil?
+		_tag = tag.name unless tag.nil?
+		raise ArgumentError.new("Parameter '#{tag}' cannot be nil..") if tag.nil?
 		if tag.name != "Namespace.ownedElement"
 			tag = tag.at_xpath("./UML:Namespace.ownedElement")
 		end
 		if tag.nil? or tag.name != "Namespace.ownedElement"
-			raise ArgumentError.new("Parameter does not contain a tag 'UML:Namespace.ownedElement'.")
+			raise ArgumentError.new("Parameter '#{_tag}' does not contain a tag 'UML:Namespace.ownedElement'.")
 		end
 		tag	
 	end
@@ -494,6 +497,33 @@ class XmiHelper
 		end		
 	end	
 
+	def self.parameter_type(tag)
+		raise ArgumentError.new("Parameter is not a 'UML:Parameter' tag.") if tag.name != "Parameter"
+		type = tag.attribute('type').to_s
+		# Se não possuir o atributo tipo, verifica se possui a tag abaixo com o tipo primitivo		
+		if type.nil? || type.empty?
+			uml_type = tag.at_xpath('./UML:Parameter.type/UML:Classifier/XMI.extension/referentPath')
+			type = uml_type.attribute('xmi.value').to_s unless uml_type.nil?
+		else
+			id = type
+			xmi_content = xmi_content(tag)
+
+			primitive = primitive_by_id(xmi_content, id)
+			return primitive.attribute('name').to_s unless primitive.nil?
+=begin			
+			clazz = class_by_id(xmi_content, id)
+			return clazz unless clazz.nil?
+
+			enum = enumeration_by_id(xmi_content, id)
+			return enum unless enum.nil?
+
+			data_type = data_type(xmi_content, id)
+			return data_type unless data_type.nil?
+=end
+		end		
+		type		
+	end
+
 	def self.parent_package(tag)
 
 		return nil if tag.nil?
@@ -526,6 +556,11 @@ class XmiHelper
 
 		return part
 	end
+
+
+	def self.primitive_by_id(document, id)
+		tag_by_id(document, 'UML:Primitive', id)
+	end	
 
 	def self.stereotypes(document)
 

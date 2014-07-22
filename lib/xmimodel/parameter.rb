@@ -6,6 +6,7 @@ class Parameter < Tag
 	
 	attr_reader :name
 	attr_reader :kind
+	attr_reader :type
 
 	attr_reader :stereotypes
 	attr_reader :tagged_values
@@ -28,7 +29,24 @@ class Parameter < Tag
 			tagged_value = TaggedValue.new(uml_tagged_value, self)
 			@tagged_values << tagged_value
 		end	
+
+		@obj_type = XmiHelper.parameter_type(xml)
+		@type = @obj_type
 	end
+
+	def is_enum?
+		return false if @obj_type.nil?
+		if @obj_type.class == Nokogiri::XML::Element
+			return true if @obj_type.name == "Enumeration"
+
+			if @obj_type.name == "Class"
+				id = @obj_type.attribute('xmi.id').to_s
+				@enum_obj = xml_root.class_by_id(id)
+				return @enum_obj.stereotypes.include?("org.andromda.profile::Enumeration")
+			end
+		end		
+		false		
+	end	
 
 	def tagged_value_by_name(tagged_value_name)
 		tagged_value = @tagged_values.select{|obj| obj.name == tagged_value_name}

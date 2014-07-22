@@ -22,6 +22,9 @@ class Namespace < Tag
 	# UML:Attribute is also present in the tag 'UML:Classifier.feature'
 	attr_reader :attributes	
 
+	# Array of 'UML:CallEvent'
+	attr_reader :call_events	
+
 	# Array of 'UML:Class'
 	attr_reader :classes
 
@@ -258,9 +261,6 @@ class Namespace < Tag
 	# UML:TimeEvent
 	attr_reader :TimeEvent
 
-	# UML:CallEvent
-	attr_reader :CallEvent
-
 	# UML:ChangeEvent
 	attr_reader :ChangeEvent
 
@@ -380,7 +380,13 @@ class Namespace < Tag
 		XmiHelper.signal_events(xml).each do |tag|
 			obj = SignalEvent.new(tag, self)
 			@signal_events << obj
-		end		
+		end
+
+		@call_events = Array.new
+		XmiHelper.call_events(xml).each do |uml_call_event|
+			call_event = CallEvent.new(uml_call_event, self)
+			@call_events << call_event
+		end	
 	end
 
 	def to_s
