@@ -42,7 +42,7 @@ class Package < Tag
 	def classes
 		return Array.new if @namespace.nil?
 		@namespace.classes
-	end
+	end	
 
 	def class_by_name(name)
 		return nil if @namespace.nil?
@@ -60,6 +60,11 @@ class Package < Tag
 		return Array.new if @namespace.nil?
 		@namespace.packages
 	end
+
+	def signal_events
+		return Array.new if @namespace.nil?
+		@namespace.signal_events
+	end	
 
 	def use_cases
 		return Array.new if @namespace.nil?

@@ -14,7 +14,7 @@ class ActionState < State
 	end
 
 	def to_s
-		"ActionState"
+		"ActionState[#{name}]"
 	end	
 
 end

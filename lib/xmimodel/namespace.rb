@@ -8,6 +8,7 @@ require 'xmimodel/use_case'
 require 'xmimodel/package'
 require 'xmimodel/tag'
 require 'xmimodel/enumeration'
+require 'xmimodel/signal_event'
 
 # UML:Namespace.ownedElement
 class Namespace < Tag
@@ -35,6 +36,9 @@ class Namespace < Tag
 
 	# Array of 'UML:Enumeration'
 	attr_reader :enumerations
+
+	# Array of 'UML:SignalEvent'
+	attr_reader :signal_events
 
 	# TODO
 =begin
@@ -257,9 +261,6 @@ class Namespace < Tag
 	# UML:CallEvent
 	attr_reader :CallEvent
 
-	# UML:SignalEvent
-	attr_reader :SignalEvent
-
 	# UML:ChangeEvent
 	attr_reader :ChangeEvent
 
@@ -373,7 +374,13 @@ class Namespace < Tag
 		XmiHelper.enumerations(xml).each do |tag|
 			obj = Enumeration.new(tag, self)
 			@enumerations << obj
-		end	
+		end
+
+		@signal_events = Array.new
+		XmiHelper.signal_events(xml).each do |tag|
+			obj = SignalEvent.new(tag, self)
+			@signal_events << obj
+		end		
 	end
 
 	def to_s

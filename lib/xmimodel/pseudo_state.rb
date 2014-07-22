@@ -14,6 +14,6 @@ class PseudoState < State
 	end
 
 	def to_s
-		"PseudoState"
+		"PseudoState[#{name}]"
 	end	
 end

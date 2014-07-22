@@ -72,6 +72,7 @@ class XmiModel
 			@generalizations << g
 		end
 
+		# Constroi vetor de associações
 		@associations = Array.new
 		XmiHelper.all_associations(xmi_content).each do |xml|
 
@@ -88,6 +89,22 @@ class XmiModel
 
 			@associations << association
 		end
+
+		# Associa os signal events aos action states 
+		use_cases.each do |use_case|
+			use_case.activity_graphs.each do |activity_graph|
+				activity_graph.states.each do |state|
+					state.transitions.each do |transition|
+						trigger_id = transition.trigger_id
+						if !trigger_id.empty?
+							signal_event = signal_event_by_id(trigger_id)
+							transition.trigger = signal_event
+						end
+					end
+				end
+			end
+		end
+
 
 		true
 	end
@@ -227,6 +244,35 @@ class XmiModel
 		end
 		@states		
 	end
+
+	def signal_events
+		return @signal_events unless @signal_events.nil?
+
+		@signal_events = Array.new
+		packages().each do |p|
+			@signal_events.concat p.signal_events.sort
+		end
+		use_cases().each do |p|
+			@signal_events.concat p.signal_events.sort
+		end
+		@signal_events		
+	end
+
+	##
+	# Get the object of type 'SignalEvent' by id.
+	#
+	# @param [String, #read] Id of the SignalEvent in model file.
+	# @return [SignalEvent]
+	def signal_event_by_id(signal_event_id)
+		raise ArgumentError.new("#{__method__}: 'signal_event_id' cannot be empty.") if signal_event_id.nil? or signal_event_id.empty?
+		signal_event = signal_events.select{|obj| obj.id == signal_event_id}
+		
+		if !signal_event.nil? && signal_event.size > 0
+			signal_event[0]
+		else
+			nil
+		end
+	end		
 
 
 	def id_exists?(id)

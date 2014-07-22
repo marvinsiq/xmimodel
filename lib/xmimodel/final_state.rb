@@ -9,7 +9,7 @@ class FinalState < State
 	end
 
 	def to_s
-		"FinalState"
+		"FinalState[#{name}]"
 	end	
 
 end

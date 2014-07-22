@@ -9,7 +9,16 @@ class State < Tag
 	attr_reader :name
 
 	attr_reader :stereotypes
-	attr_reader :tagged_values	
+	attr_reader :tagged_values
+
+	# @return [Transition]
+	attr_accessor :from_transition
+
+	# @return [Array<Transition>]
+	attr_accessor :transitions
+
+	# @return [Array<State>]
+	attr_accessor :targets		
 
 	def initialize(xml, parent_tag)
 		super(xml, parent_tag)
@@ -23,13 +32,16 @@ class State < Tag
 			if xml.name == "Pseudostate"
 				if xml.attribute("kind").to_s == "initial"
 					@name = "Initial State" 
+					@type = :initial_state
 				else
 					@name = "Decision Point" 
+					@type = :decision_point
 				end
 			end
 			@name = "Final State" if xml.name == "FinalState"
 		elsif xml.name == "FinalState"
-			@name = "Final State [#{@name}]"
+			@name = "#{@name}"
+			@type = :final_state
 		end
 
 		@stereotypes = Array.new
@@ -42,20 +54,50 @@ class State < Tag
 		XmiHelper.tagged_values(xml).each do |uml_tagged_value|
 			tagged_value = TaggedValue.new(uml_tagged_value, self)
 			@tagged_values << tagged_value
-		end		
+		end
+
+		# Serão povoados em ActivityGraph
+		@transitions = Array.new
+		@targets = Array.new		
 	end
+
+	def is_initial_state?
+		@type == :initial_state
+	end
+
+	def is_decision_point?
+		@type == :decision_point
+	end
+
+	def is_final_state?
+		@type == :final_state
+	end
+
+	def path
+		if !source().nil?
+			source().path + ":" + name
+		else
+			name
+		end
+	end
+
+	# @return [State]
+	def source
+		return nil if from_transition.nil? 
+		return from_transition.source
+	end	
 
 	def stereotype_by_name(name)
 		stereotype = @stereotypes.select{|obj| obj.name == name}
 		return stereotype[0] if !stereotype.nil? && stereotype.size > 0
 		nil		
-	end
+	end	
 
 	def tagged_value_by_name(tagged_value_name)
 		tagged_value = @tagged_values.select{|obj| obj.name == tagged_value_name}
 		return tagged_value[0] if !tagged_value.nil? && tagged_value.size > 0
 		nil
-	end	
+	end
 
 	def full_name
 		"#{@activity_graph.full_name} {'#{@name}'}"

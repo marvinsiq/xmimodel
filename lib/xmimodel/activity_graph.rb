@@ -15,6 +15,8 @@ class ActivityGraph < Tag
 
 	attr_reader :name
 
+	attr_reader :initial_state
+	attr_reader :states
 	attr_reader :pseudo_states
 	attr_reader :action_states
 	attr_reader :final_states
@@ -32,6 +34,7 @@ class ActivityGraph < Tag
 		XmiHelper.pseudo_states(xml).each do |uml|
 			pseudo_state = PseudoState.new(uml, self)
 			@pseudo_states << pseudo_state
+			@initial_state = pseudo_state if pseudo_state.is_initial_state?
 		end
 
 		@action_states = Array.new
@@ -50,7 +53,25 @@ class ActivityGraph < Tag
 		XmiHelper.transitions(xml).each do |uml|
 			transition = Transition.new(uml, self)
 			@transitions << transition
-		end			
+		end
+
+		@states = @pseudo_states.concat(@action_states).concat(@final_states)
+
+		@states.each do |state|
+
+			state.transitions = transitions_by_source_id(state.id)
+
+			state.transitions.each do |transition|
+				transition.source = state			
+				
+				target = state_by_id(transition.target_id)
+
+				target.from_transition = transition
+				transition.target = target
+
+				state.targets << target
+			end
+		end
 	end
 
 	def full_name
@@ -61,18 +82,31 @@ class ActivityGraph < Tag
 		"ActivityGraph[#{full_name}]"
 	end		
 
-	def state_by_name(name_state, state_name)
-		case name_state
-			when "PseudoState"
-				state = @pseudo_states.select{|obj| obj.name == state_name}
-			when "ActionState"
-				state = @action_states.select{|obj| obj.name == state_name}
-			when "FinalState"
-				state = @final_states.select{|obj| obj.name == state_name}
+	def state_by_name(state_name, name_state=nil)
+		if name_state.nil?
+			return @states.select{|obj| obj.name == state_name}
+		else
+			case name_state
+				when "PseudoState"
+					state = @pseudo_states.select{|obj| obj.name == state_name}
+				when "ActionState"
+					state = @action_states.select{|obj| obj.name == state_name}
+				when "FinalState"
+					state = @final_states.select{|obj| obj.name == state_name}
+			end
+			return state[0] if !state.nil? && state.size > 0
 		end
-		return state[0] if !state.nil? && state.size > 0
 		nil
 	end
+
+	def state_by_id(state_id)
+		objs = @states.select{|obj| obj.id == state_id}
+		(!objs.nil? && objs.size > 0) ? objs[0] : nil
+	end
+
+	def transitions_by_source_id(source)
+		objs = @transitions.select{|obj| obj.source_id == source}
+	end	
 
 	def transition_by_source_target_ids(source, target)
 		objs = @transitions.select{|obj| obj.source == source && obj.target == target}

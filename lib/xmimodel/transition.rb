@@ -8,9 +8,14 @@ class Transition < Tag
 
 	attr_reader :activity_graph
 
-	attr_reader :trigger
-	attr_reader :source
-	attr_reader :target
+	attr_reader :trigger_id
+	attr_reader :source_id
+	attr_reader :target_id
+
+	# Será povoado em ActivityGraph
+	attr_accessor :trigger
+	attr_accessor :source
+	attr_accessor :target	
 
 	attr_reader :stereotypes
 	attr_reader :tagged_values
@@ -22,9 +27,9 @@ class Transition < Tag
 
 		@activity_graph = parent_tag
 		
-		@trigger = xml.attribute("trigger").to_s
-		@source = xml.attribute("source").to_s
-		@target = xml.attribute("target").to_s
+		@trigger_id = xml.attribute("trigger").to_s
+		@source_id = xml.attribute("source").to_s
+		@target_id = xml.attribute("target").to_s
 
 		@stereotypes = Array.new
 		XmiHelper.stereotypes(xml).each do |uml_stereotype|
@@ -55,7 +60,9 @@ class Transition < Tag
 	end
 
 	def full_name
-		"#{@activity_graph.full_name} #{@source} --> #{@target}"		
+		source_name = @source.nil? ? "" : @source.name
+		target_name = @target.nil? ? "" : @target.name
+		"#{@activity_graph.full_name} ('#{source_name}' --> '#{target_name}')"
 	end
 
 	def to_s

@@ -30,6 +30,19 @@ class SignalEvent < Tag
 		nil		
 	end
 
+	def <=>(obj)
+    	full_name <=> obj.full_name
+	end
+
+	def ==(obj)
+		return false if obj.nil?
+		if String == obj.class
+			full_name == obj
+		else
+    		full_name == obj.full_name
+    	end
+	end		
+
 	def full_name
 		"#{use_case.full_name}::#{name}"
 	end
