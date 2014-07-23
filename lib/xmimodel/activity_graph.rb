@@ -66,7 +66,7 @@ class ActivityGraph < Tag
 				
 				target = state_by_id(transition.target_id)
 
-				target.from_transition = transition
+				target.from_transitions << transition
 				transition.target = target
 
 				state.targets << target

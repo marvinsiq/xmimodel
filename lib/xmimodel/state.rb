@@ -11,8 +11,8 @@ class State < Tag
 	attr_reader :stereotypes
 	attr_reader :tagged_values
 
-	# @return [Transition]
-	attr_accessor :from_transition
+	# @return [Array<Transition>]
+	attr_accessor :from_transitions
 
 	# @return [Array<Transition>]
 	attr_accessor :transitions
@@ -58,6 +58,7 @@ class State < Tag
 
 		# Serão povoados em ActivityGraph
 		@transitions = Array.new
+		@from_transitions = Array.new
 		@targets = Array.new		
 	end
 
@@ -85,10 +86,14 @@ class State < Tag
 		end
 	end
 
-	# @return [State]
-	def source
-		return nil if from_transition.nil? 
-		return from_transition.source
+	# @return [Array<State>]
+	def sources
+		return @sources unless @sources.nil?
+		@sources = Array.new
+		@from_transitions.each do |t|
+			@sources << t.source
+		end
+		@sources		
 	end	
 
 	def stereotype_by_name(name)
