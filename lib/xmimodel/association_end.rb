@@ -54,15 +54,26 @@ class AssociationEnd < Tag
 		@xml_a = xmls[0]
 		@xml_b = xmls[1]
 
+		@tag = xmls[index]
+
 		@xmi_model = parent_tag.parent_tag
 		@association = parent_tag
 	
 		@participant_id = @xml.attribute("participant").to_s
-
-		# argoUML
+		
 		if @participant_id.nil? or @participant_id.empty?
+
+			# argoUML
 			c = @xml.at_xpath("./UML:AssociationEnd.participant/UML:Class")			
 			@participant_id = c.attribute("xmi.idref").to_s unless c.nil?
+
+			classifier = @xml.at_xpath("./UML:AssociationEnd.participant/UML:Classifier")
+			if !classifier.nil?
+				classifier_href = classifier.attribute("href").to_s
+				paramns = classifier_href.split("|")
+				puts "TODO: Read id #{paramns[1]} from the model #{paramns[0]}"
+			end
+			
 		end
 
 		@name = @xml.attribute("name").to_s
@@ -110,7 +121,8 @@ class AssociationEnd < Tag
 	# @return [Clazz]
 	def participant
 		return nil if @participant_id.nil? or @participant_id.empty?
-		participant = @xmi_model.class_by_id(@participant_id)
+		participant = @xmi_model.class_by_id(@participant_id)		
+		return participant
 	end
 
 	def ==(obj)
@@ -145,6 +157,10 @@ class AssociationEnd < Tag
 
 	# @return [String]
 	def to_s
-		"AssociationEnd[#{name} (#{participant.full_name}])"
+		if participant.nil?
+			return "AssociationEnd[#{name}]"
+		else
+			return "AssociationEnd[#{name} (#{participant.full_name}])" 
+		end
 	end		
 end

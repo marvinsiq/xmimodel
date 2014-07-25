@@ -78,14 +78,22 @@ class XmiModel
 
 			association = Association.new(xml, self)
 			
-			association.end_a.participant.associations << association	
-			association.end_b.participant.associations << association
+			if association.end_a.participant.nil?
+				App.logger.warn "#{association.end_a} does not have an participant."
+			else
+				association.end_a.participant.associations << association	
+			end
+			if association.end_b.participant.nil?
+				App.logger.warn "#{association.end_b} does not have an participant."
+			else
+				association.end_b.participant.associations << association
+			end
 
 			association.end_a.other_end = association.end_b
 			association.end_b.other_end = association.end_a
 
-			association.end_a.participant.associations_end << association.end_b	
-			association.end_b.participant.associations_end << association.end_a			
+			association.end_a.participant.associations_end << association.end_b	unless association.end_a.participant.nil?
+			association.end_b.participant.associations_end << association.end_a	unless association.end_b.participant.nil?
 
 			@associations << association
 		end
@@ -106,8 +114,10 @@ class XmiModel
 		end
 
 		call_events().each do |call_event|
-			operation = operation_by_id(call_event.operation_id)
-			call_event.operation = operation
+			if !call_event.operation_id.nil? && !call_event.operation_id.empty?
+				operation = operation_by_id(call_event.operation_id)
+				call_event.operation = operation
+			end
 		end			
 
 		# Associa o deferrable_event dos action states aos call events
