@@ -182,7 +182,7 @@ class XmiHelper
 			enum = enumeration_by_id(xmi_content, id)
 			return enum unless enum.nil?
 
-			data_type = data_type(xmi_content, id)
+			data_type = data_type_by_id(xmi_content, id)
 			return data_type unless data_type.nil?
 		end		
 		type
@@ -252,9 +252,9 @@ class XmiHelper
 		classes
 	end
 
-	def self.data_type(document, id)
-		tag_by_id(document, 'UML:Enumeration', id)
-	end
+	def self.data_type_by_id(document, id)
+		tag_by_id(document, 'UML:DataType', id)
+	end		
 
 	def self.data_types(tag)
 		namespace(tag).xpath("./UML:DataType")		
@@ -265,7 +265,7 @@ class XmiHelper
 	end
 
 	def self.enumeration_by_id(document, id)
-		tag_by_id(document, 'UML:DataType', id)
+		tag_by_id(document, 'UML:Enumeration', id)
 	end	
 
 	def self.exporter(document)

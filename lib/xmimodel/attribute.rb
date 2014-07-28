@@ -27,7 +27,11 @@ class Attribute < Tag
 		@visibility = "private" if @visibility == ""
 
 		@obj_type = XmiHelper.attribute_type(xml)
-		@type = XmiHelper.attribute_type_name(xml)		
+		@type = XmiHelper.attribute_type_name(xml)	
+
+		#puts "Atributo:: "+ @name
+		#puts "Obj Type: "+ @obj_type
+		#puts "Type: "+ @type
 
 		@initial_value = XmiHelper.attribute_initial_value(xml)
 		@multiplicity_range = XmiHelper.multiplicity_range(xml)
@@ -66,7 +70,12 @@ class Attribute < Tag
 	def is_enum?
 		return false if @obj_type.nil?
 		if @obj_type.class == Nokogiri::XML::Element
-			return true if @obj_type.name == "Enumeration"
+			
+			if @obj_type.name == "Enumeration"
+				id = @obj_type.attribute('xmi.id').to_s
+				@enum_obj = xml_root.enumeration_by_id(id)
+				return true 
+			end
 
 			if @obj_type.name == "Class"
 				id = @obj_type.attribute('xmi.id').to_s
@@ -79,7 +88,7 @@ class Attribute < Tag
 
 	def enum_obj
 		return @enum_obj unless @enum_obj.nil?
-		is_enum?
+		is_enum?()
 		@enum_obj
 	end
 

@@ -201,6 +201,22 @@ class XmiModel
 	end	
 
 	##
+	# Get the object of type 'Clazz' by id.
+	#
+	# @param [String, #read] Id of the class in model file.
+	# @return [Enumeration]
+	def enumeration_by_id(id)
+		raise ArgumentError.new("#{__method__}: 'id' cannot be empty.") if id.nil? or id.empty?
+		obj = enumerations.select{|o| o.id == id}
+		
+		if !obj.nil? && obj.size > 0
+			obj[0]
+		else
+			nil
+		end
+	end	
+
+	##
 	# Get the object of type 'Package' by full name of package.
 	#
 	# @param [String, #read] Name of the package including sub packages name.
