@@ -29,6 +29,12 @@ class UseCase < Tag
 			@namespace = Namespace.new(namespace, self) unless namespace.nil?
 		end			
 
+		stereotype_id = xml.attribute("stereotype").to_s
+		if !stereotype_id.empty?
+			uml_stereotype = XmiHelper.stereotype_by_id(stereotype_id)
+			stereotype = Stereotype.new(uml_stereotype, self)
+			@stereotypes << stereotype			
+		end
 		@stereotypes = Array.new
 		XmiHelper.stereotypes(xml).each do |uml_stereotype|
 			stereotype = Stereotype.new(uml_stereotype, self)

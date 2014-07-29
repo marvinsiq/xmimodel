@@ -27,7 +27,7 @@ class Attribute < Tag
 		@visibility = "private" if @visibility == ""
 
 		@obj_type = XmiHelper.attribute_type(xml)
-		@type = XmiHelper.attribute_type_name(xml)	
+		@type = XmiHelper.attribute_type_name(xml)
 
 		#puts "Atributo:: "+ @name
 		#puts "Obj Type: "+ @obj_type
@@ -37,6 +37,12 @@ class Attribute < Tag
 		@multiplicity_range = XmiHelper.multiplicity_range(xml)
 
 		@stereotypes = Array.new
+		stereotype_id = xml.attribute("stereotype").to_s
+		if !stereotype_id.empty?
+			uml_stereotype = XmiHelper.stereotype_by_id(xml, stereotype_id)
+			stereotype = Stereotype.new(uml_stereotype, self)
+			@stereotypes << stereotype			
+		end		
 		XmiHelper.stereotypes(xml).each do |uml_stereotype|
 			stereotype = Stereotype.new(uml_stereotype, self)
 			@stereotypes << stereotype

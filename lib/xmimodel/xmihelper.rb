@@ -166,7 +166,7 @@ class XmiHelper
 	# 
 	# Return a object 'Nokogiri::XML::Element' of type 'UML:Class' or 'UML:DataType' or a String
 	def self.attribute_type(uml_attribute)
-		raise ArgumentError.new("Parameter is not a 'UML:Attribute' tag.") if uml_attribute.name != "Attribute"
+		raise ArgumentError.new("Parameter is not a 'UML:Attribute' or 'UML:Parameter' tag.") if uml_attribute.name != "Attribute" && uml_attribute.name != "Parameter"
 		type = uml_attribute.attribute('type').to_s
 		# Se não possuir o atributo tipo, verifica se possui a tag abaixo com o tipo primitivo		
 		if type.nil? || type.empty?

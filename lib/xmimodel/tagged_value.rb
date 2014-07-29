@@ -4,7 +4,7 @@ require 'xmimodel/tag'
 
 class TaggedValue < Tag
 
-	attr_reader :name
+	attr_accessor :name
 	attr_reader :value
 
 	def initialize(xml, parent_tag)

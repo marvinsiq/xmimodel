@@ -79,12 +79,12 @@ class XmiModel
 			association = Association.new(xml, self)
 			
 			if association.end_a.participant.nil?
-				App.logger.warn "#{association.end_a} does not have an participant."
+				puts "#{association.end_a} does not have an participant."
 			else
 				association.end_a.participant.associations << association	
 			end
 			if association.end_b.participant.nil?
-				App.logger.warn "#{association.end_b} does not have an participant."
+				puts "#{association.end_b} does not have an participant."
 			else
 				association.end_b.participant.associations << association
 			end

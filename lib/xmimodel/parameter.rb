@@ -31,7 +31,8 @@ class Parameter < Tag
 		end	
 
 		@obj_type = XmiHelper.parameter_type(xml)
-		@type = @obj_type
+		@type = XmiHelper.attribute_type_name(xml)
+		#@type = @obj_type
 	end
 
 	def is_enum?
