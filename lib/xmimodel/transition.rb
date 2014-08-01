@@ -51,7 +51,7 @@ class Transition < Tag
 		stereotype = @stereotypes.select{|s| s.name == name}
 		return stereotype[0] if !stereotype.nil? && stereotype.size > 0
 		nil		
-	end
+	end	
 
 	def tagged_value_by_name(tagged_value_name)
 		tagged_value = @tagged_values.select{|t| t.name == tagged_value_name}

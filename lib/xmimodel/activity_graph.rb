@@ -83,6 +83,7 @@ class ActivityGraph < Tag
 	end		
 
 	def state_by_name(state_name, name_state=nil)
+
 		if name_state.nil?
 			return @states.select{|obj| obj.name == state_name}
 		else
@@ -93,7 +94,8 @@ class ActivityGraph < Tag
 					state = @action_states.select{|obj| obj.name == state_name}
 				when "FinalState"
 					state = @final_states.select{|obj| obj.name == state_name}
-			end
+			end			
+
 			return state[0] if !state.nil? && state.size > 0
 		end
 		nil
@@ -108,8 +110,8 @@ class ActivityGraph < Tag
 		objs = @transitions.select{|obj| obj.source_id == source}
 	end	
 
-	def transition_by_source_target_ids(source, target)
-		objs = @transitions.select{|obj| obj.source == source && obj.target == target}
+	def transition_by_source_target_ids(source_id, target_id)
+		objs = @transitions.select{|obj| obj.source.id == source_id && obj.target.id == target_id}
 		(!objs.nil? && objs.size > 0) ? objs[0] : nil
 	end
 
