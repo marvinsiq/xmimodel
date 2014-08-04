@@ -45,6 +45,12 @@ class State < Tag
 		end
 
 		@stereotypes = Array.new
+		stereotype_id = xml.attribute("stereotype").to_s
+		if !stereotype_id.empty?
+			uml_stereotype = XmiHelper.stereotype_by_id(xml, stereotype_id)
+			stereotype = Stereotype.new(uml_stereotype, self)
+			@stereotypes << stereotype			
+		end	
 		XmiHelper.stereotypes(xml).each do |uml_stereotype|
 			stereotype = Stereotype.new(uml_stereotype, self)
 			@stereotypes << stereotype

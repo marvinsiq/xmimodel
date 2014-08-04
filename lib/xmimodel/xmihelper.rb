@@ -166,12 +166,19 @@ class XmiHelper
 	# 
 	# Return a object 'Nokogiri::XML::Element' of type 'UML:Class' or 'UML:DataType' or a String
 	def self.attribute_type(uml_attribute)
-		raise ArgumentError.new("Parameter is not a 'UML:Attribute' tag.") if uml_attribute.name != "Attribute"
+		raise ArgumentError.new("Parameter is not a 'UML:Attribute' or 'UML:Parameter' tag.") if uml_attribute.name != "Attribute" && uml_attribute.name != "Parameter"
 		type = uml_attribute.attribute('type').to_s
 		# Se não possuir o atributo tipo, verifica se possui a tag abaixo com o tipo primitivo		
 		if type.nil? || type.empty?
+
 			uml_type = uml_attribute.at_xpath('./UML:StructuralFeature.type/UML:Classifier/XMI.extension/referentPath')
 			type = uml_type.attribute('xmi.value').to_s unless uml_type.nil?
+
+			if type.nil? || type.empty?
+				uml_type = uml_attribute.at_xpath('./UML:Parameter.type/UML:Classifier/XMI.extension/referentPath')
+				type = uml_type.attribute('xmi.value').to_s unless uml_type.nil?
+			end
+
 		else
 			id = type
 			xmi_content = xmi_content(uml_attribute)
@@ -184,6 +191,9 @@ class XmiHelper
 
 			data_type = data_type_by_id(xmi_content, id)
 			return data_type unless data_type.nil?
+
+			primitive = primitive_by_id(xmi_content, id)
+			return primitive.attribute('name').to_s unless primitive.nil?			
 		end		
 		type
 	end
@@ -496,33 +506,6 @@ class XmiHelper
 			raise ArgumentError.new("Parameter (#{tag.name}) is not a UML:SignalEvent or UML:Operation tag.") 
 		end		
 	end	
-
-	def self.parameter_type(tag)
-		raise ArgumentError.new("Parameter is not a 'UML:Parameter' tag.") if tag.name != "Parameter"
-		type = tag.attribute('type').to_s
-		# Se não possuir o atributo tipo, verifica se possui a tag abaixo com o tipo primitivo		
-		if type.nil? || type.empty?
-			uml_type = tag.at_xpath('./UML:Parameter.type/UML:Classifier/XMI.extension/referentPath')
-			type = uml_type.attribute('xmi.value').to_s unless uml_type.nil?
-		else
-			id = type
-			xmi_content = xmi_content(tag)
-
-			primitive = primitive_by_id(xmi_content, id)
-			return primitive.attribute('name').to_s unless primitive.nil?
-=begin			
-			clazz = class_by_id(xmi_content, id)
-			return clazz unless clazz.nil?
-
-			enum = enumeration_by_id(xmi_content, id)
-			return enum unless enum.nil?
-
-			data_type = data_type(xmi_content, id)
-			return data_type unless data_type.nil?
-=end
-		end		
-		type		
-	end
 
 	def self.parent_package(tag)
 
