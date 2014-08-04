@@ -88,9 +88,19 @@ class Clazz < Tag
 			parent = Nokogiri::XML::Node.new('Classifier.feature', self.xml.document)
 			self.xml << parent
 		end		
-		parent.inner_html = parent.inner_html + xml_attribute
+		parent.inner_html = parent.inner_html + xml_attribute.to_xml
 
-		@attributes << Attribute.new(uml_attribute, self)		
+		@attributes << Attribute.new(xml_attribute, self)		
+	end
+
+	##
+	# @param Attribute
+	def remove_attribute(attribute)		
+		
+		id = attribute.id
+		xml_attribute = attribute.parent_tag.xml.at_xpath("//UML:Attribute[@xmi.id='#{id}']")
+		xml_attribute.remove
+		#puts "xml: #{attribute.parent_tag.xml}"
 	end
 
 	##

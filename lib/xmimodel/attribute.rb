@@ -8,7 +8,7 @@ class Attribute < Tag
 
 	attr_reader :name
 	attr_reader :type
-	attr_reader :visibility
+	attr_accessor :visibility
 	attr_reader :initial_value
 	attr_reader :multiplicity_range
 	
@@ -137,6 +137,16 @@ class Attribute < Tag
 			self.xml << model_element_tagged_value
 		end
 		@model_element_tagged_value
+	end
+
+	def visibility=(value)
+		visibility = @xml.attribute("visibility")
+		if visibility.nil?
+			visibility = @xml.set_attribute('visibility', value)
+		else
+			visibility.value = value
+		end				
+		@visibility = value
 	end
 
 end
