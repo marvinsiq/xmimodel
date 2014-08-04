@@ -105,8 +105,14 @@ class XmiModel
 					state.transitions.each do |transition|
 						trigger_id = transition.trigger_id
 						if !trigger_id.empty?
+							
 							signal_event = signal_event_by_id(trigger_id)
 							transition.trigger = signal_event
+
+							if transition.trigger.nil?
+								call_event = call_event_by_id(trigger_id)
+								transition.trigger = call_event
+							end
 						end
 					end
 				end

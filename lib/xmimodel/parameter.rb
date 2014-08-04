@@ -30,7 +30,8 @@ class Parameter < Tag
 			@tagged_values << tagged_value
 		end	
 
-		@obj_type = XmiHelper.parameter_type(xml)
+		#type = xml.attribute('type').to_s
+		@obj_type = XmiHelper.attribute_type(xml)
 		@type = XmiHelper.attribute_type_name(xml)
 		#@type = @obj_type
 	end
